@@ -53,7 +53,7 @@ public class FixMessageParserExample {
 
 ## Benchmarking
 
-See `jpm/assignment/fixparser/benchmarking/FixMessage42ParserBenchmark.java`.
+See `FixMessage42ParserBenchmark.java`.
 
 ### Result
 

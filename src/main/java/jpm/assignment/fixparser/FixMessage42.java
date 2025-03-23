@@ -4,18 +4,24 @@ import java.util.BitSet;
 
 public class FixMessage42 {
     private static final int NUM_FIELDS = 446;
+    private static final int NUM_POSSIBLE_FIELDS_IN_SINGLE_MSG = 256;
     private final BitSet availableFields;
     private final ByteArrayView[] fields;
+    private final int[] fieldIndex;
+    private int numFields;
 
     public FixMessage42() {
         this.availableFields = new BitSet(FixMessage42.NUM_FIELDS);
-        this.fields = new ByteArrayView[FixMessage42.NUM_FIELDS];
+        this.fields = new ByteArrayView[FixMessage42.NUM_POSSIBLE_FIELDS_IN_SINGLE_MSG];
+        this.fieldIndex = new int[FixMessage42.NUM_FIELDS];
+        numFields = 0;
         initializeFields();
     }
 
     public FixMessage42(FixMessage42 msg) {
         this.availableFields = (BitSet) msg.availableFields.clone();
         this.fields = new ByteArrayView[FixMessage42.NUM_FIELDS];
+        this.fieldIndex = msg.fieldIndex;
         copyFixFields(msg);
     }
 
@@ -36,19 +42,22 @@ public class FixMessage42 {
 
     public void clear() {
         this.availableFields.clear();
+        this.numFields = 0;
     }
 
-    public void setField(int fieldIndex, byte[] chars, int start, int length) {
-        final ByteArrayView view = this.fields[fieldIndex];
+    public void setField(int tag, byte[] chars, int start, int length) {
+        final ByteArrayView view = this.fields[numFields];
         view.setChars(chars);
         view.setStart(start);
         view.setLength(length);
-        availableFields.set(fieldIndex, true);
+        availableFields.set(tag, true);
+        fieldIndex[tag] = numFields;
+        ++numFields;
     }
 
-    public ByteArrayView get(int fieldIndex) {
-        if (availableFields.get(fieldIndex)) {
-            return this.fields[fieldIndex];
+    public ByteArrayView get(int tag) {
+        if (availableFields.get(tag)) {
+            return this.fields[fieldIndex[tag]];
         } else {
             return null;
         }

@@ -21,7 +21,7 @@ public class FixMessageGenerator {
         StringBuilder fixMessage = new StringBuilder();
 
         // Add standard FIX header fields
-        fixMessage.append("8=FIX.4.4|");
+        fixMessage.append("8=FIX.4.2|");
         fixMessage.append("35=").append(messageType).append("|");
         fixMessage.append("49=SenderCompID|");
         fixMessage.append("56=TargetCompID|");

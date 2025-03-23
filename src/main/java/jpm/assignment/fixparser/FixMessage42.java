@@ -7,13 +7,13 @@ public class FixMessage42 {
     private static final int NUM_POSSIBLE_FIELDS_IN_SINGLE_MSG = 256;
     private final BitSet availableFields;
     private final ByteArrayView[] fields;
-    private final int[] fieldIndex;
+    private final int[] fieldIndices;
     private int numFields;
 
     public FixMessage42() {
         this.availableFields = new BitSet(FixMessage42.NUM_FIELDS);
         this.fields = new ByteArrayView[FixMessage42.NUM_POSSIBLE_FIELDS_IN_SINGLE_MSG];
-        this.fieldIndex = new int[FixMessage42.NUM_FIELDS];
+        this.fieldIndices = new int[FixMessage42.NUM_FIELDS];
         numFields = 0;
         initializeFields();
     }
@@ -21,7 +21,7 @@ public class FixMessage42 {
     public FixMessage42(FixMessage42 msg) {
         this.availableFields = (BitSet) msg.availableFields.clone();
         this.fields = new ByteArrayView[FixMessage42.NUM_FIELDS];
-        this.fieldIndex = msg.fieldIndex;
+        this.fieldIndices = msg.fieldIndices;
         copyFixFields(msg);
     }
 
@@ -51,13 +51,13 @@ public class FixMessage42 {
         view.setStart(start);
         view.setLength(length);
         availableFields.set(tag, true);
-        fieldIndex[tag] = numFields;
+        fieldIndices[tag] = numFields;
         ++numFields;
     }
 
     public ByteArrayView get(int tag) {
         if (availableFields.get(tag)) {
-            return this.fields[fieldIndex[tag]];
+            return this.fields[fieldIndices[tag]];
         } else {
             return null;
         }

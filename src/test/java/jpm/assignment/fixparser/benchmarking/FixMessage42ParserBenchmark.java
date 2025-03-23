@@ -1,8 +1,6 @@
 package jpm.assignment.fixparser.benchmarking;
 
-import jpm.assignment.fixparser.ByteArrayView;
-import jpm.assignment.fixparser.FixMessage42Parser;
-import jpm.assignment.fixparser.FixMessage42;
+import jpm.assignment.fixparser.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -18,7 +16,7 @@ public class FixMessage42ParserBenchmark {
         {
             FixMessage42Parser parser = new FixMessage42Parser();
 
-            System.out.println("Starting benchmark for Fix42Parser...");
+            System.out.println("Starting benchmark for Fix42Parser (Parse Only)...");
             System.out.println("Executing iterations for warmup: " + numOfWarmupIterations);
 
             benchmarkParseOnly(numOfWarmupIterations, messageLengthLowerBound, parser);
@@ -47,7 +45,7 @@ public class FixMessage42ParserBenchmark {
         {
             FixMessage42Parser parser = new FixMessage42Parser();
 
-            System.out.println("Starting benchmark for Fix42Parser...");
+            System.out.println("Starting benchmark for Fix42Parser (Parse & Consume)...");
             System.out.println("Executing iterations for warmup: " + numOfWarmupIterations);
 
             benchmarkParseOnly(numOfWarmupIterations, messageLengthLowerBound, parser);
@@ -90,6 +88,11 @@ public class FixMessage42ParserBenchmark {
     }
 
     private static void consume(FixMessage42 parsed, Random random) {
+        // we can use ByteArrayViewUtils.INSTANCE to parse values.
+        final int seqNum = ByteArrayViewUtils.INSTANCE.parseInt(parsed.get(FixTag.MsgSeqNum.getNumber()));
+        if (seqNum < 0) {
+            throw new RuntimeException("MsgSeqNum cannot less than 0.");
+        }
         final int fieldIndex = random.nextInt(100);
         final ByteArrayView byteArrayView = parsed.get(fieldIndex);
         if (byteArrayView != null && byteArrayView.charAt(0) == '_')
